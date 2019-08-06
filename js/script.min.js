@@ -1,5 +1,5 @@
 // const fmpAPI = "https://financialmodelingprep.com/api/v3/";
-const nbpAPI = 'http://api.nbp.pl/api/';
+const nbpAPI = 'https://api.nbp.pl/api/';
 const format = '?format=json';
 // http://api.nbp.pl/
 
