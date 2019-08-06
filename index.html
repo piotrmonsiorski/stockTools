@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Stock Tools</title>
+  <meta name="description" content="Gold and Stock Market tools">
+  <meta name="author" content="Piotr Monsiorski">
+  <meta name="robots" content="follow">
+
+  <link rel="stylesheet" href="css/reset.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+  <h1>Gold Prices</h1>
+
+  <div class="container">
+    <div class="canvas-container canvas-main">
+      <canvas id="goldMain"></canvas>
+    </div>
+    <div class="canvas-container canvas-full">
+      <canvas id="goldFull"></canvas>
+    </div>
+  </div>
+  <nav class="container">
+    <div class="control-wrap">
+      <button class="btn" id="chartWeek">tydzień</button>
+      <button class="btn" id="chartMonth">miesiąc</button>
+      <button class="btn" id="chartYear">rok</button>
+      <button class="btn" id="chartFull">od początku</button>
+
+      <div class="own-wrap closed">
+        <div class="own-period">
+          <div id="ownStart">
+            <input type="number" name="startDay" placeholder="DD" min="1" max="31" step="1" value="1" class="day">
+            <input type="number" name="startMonth" placeholder="MM" min="1" max="12" step="1" value="1" class="month">
+            <input type="number" name="startYear" placeholder="YYYY" min="2013" step="1" value="2013" class="year">
+            <label class="tooltip"></label>
+          </div>
+          <button class="swap" id="swapDates">
+            <i class="fas fa-exchange-alt"></i>
+            <label class="tooltip"></label>
+          </button>
+          <div id="ownEnd">
+            <input type="number" name="endDay" placeholder="DD" min="1" max="31" step="1" value="1" class="day">
+            <input type="number" name="endMonth" placeholder="MM" min="1" max="12" step="1" value="2" class="month">
+            <input type="number" name="endYear" placeholder="YYYY" min="2013" step="1" value="2013" class="year">
+            <label class="tooltip"></label>
+          </div>
+          <button class="btn btn-own" id="chartOwnSet">ustaw</button>
+        </div>
+      </div>
+      <button class="btn btn-own flex-right" id="chartOwn">własny zakres</button>
+    </div>
+  </nav>
+
+  <!-- <script src="list.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+
+  <!-- <script src="js/functions.js"></script>
+  <script src="js/classes.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/script.js"></script>
+  <script src="js/buttons.js"></script> -->
+  <script src="js/script.min.js"></script>
+</body>
+</html>
