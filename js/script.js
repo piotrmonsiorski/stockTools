@@ -10,9 +10,17 @@ const lastWeekObj = currentDateObj.makeDate(0, 0, -7);
 const lastMonthObj = currentDateObj.makeDate(0, -1, 0);
 const lastYearObj = currentDateObj.makeDate(-1, 0, 0);
 
-let apiInitStartDate = `${lastMonthObj.year}-${lastMonthObj.month}-${lastMonthObj.day}`;
-let apiInitEndDate = `${currentDateObj.year}-${currentDateObj.month}-${currentDateObj.day}`;
+const startDate = lastYearObj;
+const endDate = currentDateObj;
+
+let apiStartDate = `${startDate.year}-${startDate.month}-${startDate.day}`;
+let apiEndDate = `${endDate.year}-${endDate.month}-${endDate.day}`;
 
 // console.log(currentDate)
 let goldDataset = [];
-initCharts();
+const currencyDatasets = [];
+let currencyList = [];
+
+let chartdataList = [];
+
+initBoard();

@@ -1,49 +1,80 @@
-function drawChart(canvas, goldData) {
-  let canvasNode = document.querySelector(`#${canvas}`);
-  canvasNode.parentNode.innerHTML = `<canvas id="${canvas}">`; // remove previous chart if exists
-  canvasNode = document.querySelector(`#${canvas}`);
+const chartSettings = {
+  minGold: 100,
+  maxGold: 200,
+  minCurrency: 2,
+  maxCurrency: 5
+}
+
+document.querySelector('[name="goldMin"]').value = chartSettings.minGold;
+document.querySelector('[name="goldMax"]').value = chartSettings.maxGold;
+document.querySelector('[name="currencyMin"]').value = chartSettings.minCurrency;
+document.querySelector('[name="currencyMax"]').value = chartSettings.maxCurrency;
+
+function drawChart(_canvas = 'chartMain', _startDate = apiStartDate, _endDate = apiEndDate) {
+  let canvasNode = document.querySelector(`#${_canvas}`);
+  canvasNode.parentNode.innerHTML = `<canvas id="${_canvas}">`; // remove previous chart if exists
+  canvasNode = document.querySelector(`#${_canvas}`);
   const canvasCtx = canvasNode.getContext('2d');
 
-  const chartLabels = goldData.reduce( (acc, val, idx) => {
+  // correct format to YYYY-MM-DD
+  let startDate = setDateFormat(_startDate);
+  let endDate = setDateFormat(_endDate);
+
+  // set to closest working day
+  let startIndex = goldDataset.findIndex( val => val.data >= startDate );
+  let endIndex = goldDataset.findIndex( (val,idx) => {
+    // console.log(val.data, endDate, idx);
+    return val.data > endDate}
+  );
+  endIndex == -1 ? endIndex = goldDataset.length : false; // in case currentDay is not on the list
+
+  const datasets = [];
+  for (let chart of chartdataList) {
+    const chartData = chart.dataset.reduce( (acc, val, idx) => {
+      acc.push(val.cena);
+      return acc;
+    }, []) // reduce to 1 dim array
+      .slice(startIndex, endIndex);
+
+    let label = chart.type == 'gold' ? 'gold' : 'currency';
+
+    datasets.push({
+      data: chartData,
+      yAxisID: label,
+      backgroundColor: 'transparent',
+      borderColor: chart.color,
+      borderWidth: 2,
+      lineTension: 0
+    });
+  }
+
+  const chartLabels = chartdataList[0].dataset.reduce( (acc, val, idx) => {
     acc.push(val.data);
     return acc;
-  }, []);
-  const chartData = goldData.reduce( (acc, val, idx) => {
-    acc.push(val.cena);
-    return acc;
-  }, []);
+  }, []) // reduce to 1 dim array
+    .slice(startIndex, endIndex);
+
+  const minTicksGold = chartSettings.minGold;
+  const maxTicksGold = chartSettings.maxGold;
+  const minTicksCurrency = chartSettings.minCurrency;
+  const maxTicksCurrency = chartSettings.maxCurrency;
+
 
   // const minTick = Math.round( ([...chartData].sort( (a,b) => a - b )[0] - 10) / 10 ) * 10; // 168 - 160
   // const maxTick = Math.round( ([...chartData].sort( (a,b) => b - a )[0] + 10) / 10 ) * 10; // 179 - 190
 
-  const minTick = Math.round( [...chartData].sort( (a,b) => a - b )[0] * 0.975 );
-  const maxTick = Math.round( [...chartData].sort( (a,b) => b - a )[0] * 1.025 );
+  // const minTick = Math.round( [...chartData].sort( (a,b) => a - b )[0] * 0.975 );
+  // const maxTick = Math.round( [...chartData].sort( (a,b) => b - a )[0] * 1.025 );
 
-  let aspectRatio = 2;
-  switch(canvas) {
-    case 'goldMain':
-      aspectRatio = 2;
-      break;
-    case 'goldFull':
-      aspectRatio = 6;
-      break;
-    default:
-      break;
-  }
+  let aspectRatio = 3;
 
-  const goldMainChart = new Chart(canvasCtx, {
+
+
+  const mainChart = new Chart(canvasCtx, {
     type: 'line',
     data: {
       labels: chartLabels,
-      datasets: [{
-        data: chartData,
-        backgroundColor: 'transparent',
-        borderColor: [
-          'rgba(255, 99, 132, 1)'
-        ],
-        borderWidth: 2,
-        lineTension: 0
-      }]
+      datasets: datasets
     },
     options: {
       aspectRatio: aspectRatio,
@@ -52,9 +83,19 @@ function drawChart(canvas, goldData) {
       },
       scales: {
         yAxes: [{
+          id: 'gold',
+          position: 'left',
           ticks: {
-            min: minTick,
-            max: maxTick,
+            min: minTicksGold,
+            max: maxTicksGold,
+            beginAtZero: false,
+          }
+        },{
+          id: 'currency',
+          position: 'right',
+          ticks: {
+            min: minTicksCurrency,
+            max: maxTicksCurrency,
             beginAtZero: false,
           }
         }],
@@ -68,4 +109,5 @@ function drawChart(canvas, goldData) {
       }
     }
   });
+  // console.log(mainChart);
 }

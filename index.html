@@ -11,53 +11,181 @@
 
   <link rel="stylesheet" href="css/reset.min.css">
   <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+  <link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/metropolis" type="text/css"/>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" crossorigin="anonymous">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
 
-  <h1>Gold Prices</h1>
+  <!-- <nav class="container navbar-tabs">
+    <a class="tab active" for="container-gold">Złoto</a>
+    <a class="tab" for="container-stock">Giełda</a>
+    <a class="tab" for="container-bonds">Obligacje</a>
+  </nav> -->
+  <h1>Stock Tools</h1>
 
-  <div class="container">
+  <div class="container canvas">
     <div class="canvas-container canvas-main">
-      <canvas id="goldMain"></canvas>
+      <canvas id="chartMain"></canvas>
     </div>
-    <div class="canvas-container canvas-full">
-      <canvas id="goldFull"></canvas>
+    <button class="btn-icon btn-chart-settings" name="chartSettings"><i class="fas fa-sliders-h fa-rotate-90"></i></button>
+  </div>
+
+  <div class="chart-settings hidden">
+    <div class="settings">
+      <h2 class="subtitle">ustawienia wykresu</h2>
+      <div class="row">
+        <h3 class="subtitle-sm">wykres złota (zakres)</h3>
+        <label class="settings-label">od</label>
+        <input class="input-number input-wider" type="number" name="goldMin" min="0">
+        <label class="settings-label">do</label>
+        <input class="input-number input-wider" type="number" name="goldMax" min="0">
+      </div>
+      <div class="row">
+        <h3 class="subtitle-sm">wykres złota (zakres)</h3>
+        <label class="settings-label">od</label>
+        <input class="input-number input-wider" type="number" name="currencyMin" min="0">
+        <label class="settings-label">do</label>
+        <input class="input-number input-wider" type="number" name="currencyMax" min="0">
+      </div>
+      <div class="row">
+        <button class="btn" name="settingsSave">zapisz</button>
+        <button class="btn btn-outline" name="settingsCancel">anuluj</button>
+      </div>
     </div>
   </div>
-  <nav class="container">
-    <div class="control-wrap">
-      <button class="btn" id="chartWeek">tydzień</button>
-      <button class="btn" id="chartMonth">miesiąc</button>
-      <button class="btn" id="chartYear">rok</button>
-      <button class="btn" id="chartFull">od początku</button>
+
+  <div class="container control">
+    <div class="range-wrap">
+      <button class="btn" id="btnChartWeek">tydzień</button>
+      <button class="btn" id="btnChartMonth">miesiąc</button>
+      <button class="btn" id="btnChartYear">rok</button>
+      <button class="btn" id="btnChartFull">od początku</button>
 
       <div class="own-wrap closed">
         <div class="own-period">
           <div id="ownStart">
-            <input type="number" name="startDay" placeholder="DD" min="1" max="31" step="1" value="1" class="day">
-            <input type="number" name="startMonth" placeholder="MM" min="1" max="12" step="1" value="1" class="month">
-            <input type="number" name="startYear" placeholder="YYYY" min="2013" step="1" value="2013" class="year">
-            <label class="tooltip"></label>
+            <input class="input-number" type="number" name="startDay" placeholder="DD" min="1" max="31" step="1" value="10" class="day">
+            <input class="input-number" type="number" name="startMonth" placeholder="MM" min="1" max="12" step="1" value="4" class="month">
+            <input class="input-number input-wider" type="number" name="startYear" placeholder="YYYY" min="2013" step="1" value="2013" class="year">
+            <label class="tooltip" name="startDate"></label>
           </div>
-          <button class="swap" id="swapDates">
+          <button class="btn-icon swap" id="swapDates">
             <i class="fas fa-exchange-alt"></i>
-            <label class="tooltip"></label>
+            <label class="tooltip" name="swapDates"></label>
           </button>
           <div id="ownEnd">
-            <input type="number" name="endDay" placeholder="DD" min="1" max="31" step="1" value="1" class="day">
-            <input type="number" name="endMonth" placeholder="MM" min="1" max="12" step="1" value="2" class="month">
-            <input type="number" name="endYear" placeholder="YYYY" min="2013" step="1" value="2013" class="year">
-            <label class="tooltip"></label>
+            <input class="input-number" type="number" name="endDay" placeholder="DD" min="1" max="31" step="1" value="20" class="day">
+            <input class="input-number" type="number" name="endMonth" placeholder="MM" min="1" max="12" step="1" value="4" class="month">
+            <input class="input-number input-wider" type="number" name="endYear" placeholder="YYYY" min="2013" step="1" value="2013" class="year">
+            <label class="tooltip" name="endDate"></label>
           </div>
-          <button class="btn btn-own" id="chartOwnSet">ustaw</button>
+          <button class="btn" id="chartOwnSet">ustaw</button>
         </div>
       </div>
-      <button class="btn btn-own flex-right" id="chartOwn">własny zakres</button>
+      <button class="btn flex-right" id="chartOwn">własny zakres</button>
     </div>
-  </nav>
+
+    <div class="data-wrap">
+      <h3 class="subtitle">zarządzaj wykresami</h3>
+      <div class="container data-buttons">
+        <button class="btn btn-outline btn-dark btn-add" id="chartAdd"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
+
+    <div class="container data-add hidden">
+      <div class="wrap">
+        <div class="row type-select">
+          <label class="data-label">wykres:</label>
+          <select name="typeSelect">
+            <option value="gold">złoto</option>
+          </select>
+          <label class="tooltip tooltip-error tooltip-right" name="dataAddType"><i class="fas fa-times-circle"></i>wykres tego typu już istnieje</label>
+        </div>
+        <div class="row color-select">
+          <label class="data-label">kolor:</label>
+          <select name="colorSelect">
+            <option value="red">czerwony</option>
+            <option value="blue">niebieski</option>
+            <option value="violet">fioletowy</option>
+            <option value="green">zielony</option>
+            <option value="orange">pomarańczowy</option>
+            <option value="grey">szary</option>
+            <option value="black">czarny</option>
+          </select>
+          <label class="tooltip tooltip-warning tooltip-right" name="dataAddColor"><i class="fas fa-exclamation-triangle"></i>taki kolor już istnieje</label>
+        </div>
+        <button class="btn" id="dataAdd">dodaj</button>
+        <button class="btn btn-outline btn-dark" name="dataCancel">anuluj</button>
+        <label class="tooltip" name="dataAdd"></label>
+      </div>
+    </div>
+
+    <div class="container data-edit hidden">
+      <div class="wrap">
+        <div class="row type-select">
+          <label class="data-label">wykres:</label>
+          <select name="typeSelect">
+            <option value="gold">złoto</option>
+          </select>
+          <label class="tooltip tooltip-error tooltip-right" name="dataEditType"><i class="fas fa-times-circle"></i>wykres tego typu już istnieje</label>
+        </div>
+        <div class="row color-select">
+          <label class="data-label">kolor:</label>
+          <select name="colorSelect">
+            <option value="red">czerwony</option>
+            <option value="blue">niebieski</option>
+            <option value="violet">fioletowy</option>
+            <option value="green">zielony</option>
+            <option value="orange">pomarańczowy</option>
+            <option value="grey">szary</option>
+            <option value="black">czarny</option>
+          </select>
+          <label class="tooltip tooltip-warning tooltip-right" name="dataEditColor"><i class="fas fa-exclamation-triangle"></i>taki kolor już istnieje</label>
+        </div>
+        <button class="btn" id="dataEdit">zapisz</button>
+        <button class="btn" id="dataRemove">usuń</button>
+        <button class="btn btn-outline btn-dark" name="dataCancel">anuluj</button>
+        <!-- <label class="tooltip" name="dataEdit"></label> -->
+      </div>
+    </div>
+
+    <!-- <div class="data-wrap">
+      <h3 class="subtitle">zarządzaj wykresami</h3>
+      <div class="container data-buttons">
+        <button class="btn btn-data" data-currency="gold" style="background-color: rgb(188, 29, 40); border-color: rgb(188, 29, 40);">gold<span class="edit"><i class="fas fa-edit"></i></span></button>
+        <button class="btn btn-outline btn-add" id="chartAdd"><i class="fas fa-plus"></i></button>
+      </div>
+      <div class="container data-edit hidden">
+        <div class="wrap">
+          <div class="row">
+            <label>wykres:</label>
+            <select name="dataSelect">
+              <option value="gold">złoto</option>
+            </select>
+          </div>
+          <div class="row">
+            <label>kolor:</label>
+            <select name="colorSelect">
+              <option value="czerwony">czerwony</option>
+              <option value="niebieski">niebieski</option>
+              <option value="fioletowy">fioletowy</option>
+              <option value="zielony">zielony</option>
+              <option value="pomarańczowy">pomarańczowy</option>
+              <option value="szary">szary</option>
+              <option value="czarny">czarny</option>
+            </select>
+          </div>
+          <button class="btn" id="dataSubmit">dodaj</button>
+          <button class="btn" id="dataEdit">edytuj</button>
+          <button class="btn" id="dataRemove">usuń</button>
+          <button class="btn btn-outline" id="dataCancel">anuluj</button>
+          <label class="tooltip"></label>
+        </div>
+      </div>
+    </div> -->
+
 
   <!-- <script src="list.js"></script> -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>

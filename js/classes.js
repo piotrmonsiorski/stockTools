@@ -1,3 +1,34 @@
+class ChartData {
+  constructor(type, color, dataset) {
+    this.type = type;
+    this.color = color;
+    this.dataset = dataset;
+  }
+  getColor() {
+    let color = this.color;
+
+    switch(color) {
+      case 'red':
+        color = '#bc1d28'; break;
+      case 'blue':
+        color = '#394fb2'; break;
+      case 'violet':
+        color = '#8a20c0'; break;
+      case 'green':
+        color = '#1f821b'; break;
+      case 'orange':
+        color = '#e08e19'; break;
+      case 'grey':
+        color = '#6b6b6b'; break;
+      case 'black':
+      default:
+        color = '#22222'; break;
+    }
+
+    return color;
+  }
+}
+
 class CurrentDate {
   constructor() {
     const date = new Date();
