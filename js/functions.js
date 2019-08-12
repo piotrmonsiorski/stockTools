@@ -1,3 +1,5 @@
+// https://www.worldtradingdata.com/
+
 // const fmpAPI = "https://financialmodelingprep.com/api/v3/";
 const nbpAPI = 'https://api.nbp.pl/api';
 const format = '?format=json';
@@ -74,24 +76,14 @@ function initBoard() {
             node.appendChild(optionNode);
           }
         });
+      })
+      .then( () => {
+        // temp for development
+        addData('USD', 'green');
+        addData('EUR', 'blue');
       });
 
-    // temp for development
-    addData('USD', 'red');
 }
-
-// function setCurrencyList() {
-//   getCurrencies()
-//     .then(results => {
-//       const dataSelectNode = document.querySelector('[name="dataSelect"]');
-//       for(let result of results) {
-//         const optionNode = document.createElement('option');
-//         optionNode.value = result.code;
-//         optionNode.innerHTML = `${result.code} - ${result.currency}`;
-//         dataSelectNode.appendChild(optionNode);
-//       }
-//     });
-// }
 
 function updateChart() {
   drawChart();
@@ -118,11 +110,11 @@ function updateButtons() {
     const buttonNode = document.createElement('button');
     buttonNode.classList.add('btn');
     buttonNode.classList.add('btn-data');
-    buttonNode.dataset.name = chart.type;
+    buttonNode.dataset.type = chart.type;
     buttonNode.style.backgroundColor = chart.getColor();
     buttonNode.style.borderColor = chart.getColor();
     buttonNode.innerHTML = `${chart.type}<span class="edit"><i class="fas fa-edit"></i></span>`;
-    // buttonNode.addEventListener('click', editData);
+    buttonNode.addEventListener('click', showEditPanel);
     dataButtonsNode.appendChild(buttonNode);
   }
 }
@@ -139,30 +131,30 @@ function updateChartRanges() {
   document.querySelector('[name="endYear"]').value = Number(endDate[0]);
 }
 
-function editData() {
+function showEditPanel() {
   const dataEditNode = document.querySelector('.data-edit');
   const dataAddNode = document.querySelector('.data-add');
   dataEditNode.classList.remove('hidden');
   dataAddNode.classList.add('hidden');
 
-  const dataName = event.target.dataset.name;
-
-  const datalist = chartdataList[chartdataList.findIndex( chart => chart.name = dataName )];
+  const datalist = chartdataList[chartdataList.findIndex( chart => chart.type == this.dataset.type )];
 
   const inpTypeSelect = document.querySelector('.data-edit [name="typeSelect"]');
   const inpColorSelect = document.querySelector('.data-edit [name="colorSelect"]');
-  const btnDataEdit = document.querySelector('#dataEdit');
-  const btnDataRemove = document.querySelector('#dataRemove');
+  const btnDataSave = document.querySelector('[name="dataSave"]');
+  const btnDataRemove = document.querySelector('[name="dataRemove"]');
+  const inpTypeEdited = document.querySelector('.data-edit [name="typeEdited"]');
 
-  inpTypeSelect.value = datalist.name;
+  inpTypeSelect.value = datalist.type;
   inpColorSelect.value = datalist.color;
-  btnDataEdit.style.backgroundColor = datalist.color;
-  btnDataEdit.style.borderColor = datalist.color;
-  btnDataRemove.style.backgroundColor = datalist.color;
-  btnDataRemove.style.borderColor = datalist.color;
+  btnDataSave.style.backgroundColor = datalist.getColor();
+  btnDataSave.style.borderColor = datalist.getColor();
+  btnDataRemove.style.backgroundColor = datalist.getColor();
+  btnDataRemove.style.borderColor = datalist.getColor();
+  inpTypeEdited.value = datalist.type;
 }
 
-function addData(type, color) {
+function addData(type, color, index = false) {
   let startDate = apiMinDate.split('-');
   let endDate = apiMaxDate.split('-');
 
@@ -200,17 +192,63 @@ function addData(type, color) {
           'cena': val.mid
         }
       });
-
       currencyDatasets.push(currencyObj);
-      chartdataList.push( new ChartData(type, color, currencyObj.dataset) )
-      updateChart(apiStartDate, apiEndDate);
+      if (index !== false && index > -1) {
+        chartdataList[index] = new ChartData(type, color, currencyObj.dataset);
+      }
+      else {
+        chartdataList.push( new ChartData(type, color, currencyObj.dataset) )
+      }
 
+      updateChart(apiStartDate, apiEndDate);
       updateButtons();
     });
+}
 
+function editData(type, color, index) {
+  if( !(type == inpEditTypeEdited.value) ) { // if dataType is edited
+    if (inpEditTypeEdited.value == 'gold') {
+      chartdataList[index].type = type;
+      addData(type, color, index);
+    }
+    else if (!currencyDatasets.every( chart => chart.type != type)) { // also type != gold
+      chartdataList[index].type = type;
+      chartdataList[index].dataset = currencyDatasets[currencyDatasets.findIndex(chart => chart.type == type)].dataset;
+    }
+    else {
+      addData(type, color, index);
+    }
+    inpEditTypeEdited.value = type;
+  }
+  chartdataList[index].color = color;
 
-  // chartdataList.push( new ChartData(type, color, goldDataset) )
-  // updateChart(apiStartDate, apiEndDate);
+  updateChart();
+  updateButtons();
+
+  const colorHex = chartdataList[index].getColor();
+
+  btnDataSave.style.backgroundColor = colorHex;
+  btnDataSave.style.borderColor = colorHex;
+  btnDataRemove.style.backgroundColor = colorHex;
+  btnDataRemove.style.borderColor = colorHex;
+
+  console.log(type, color, index);
+
+}
+
+function removeData(type) {
+  if (chartdataList.length - 1) {
+    dataEditNode.classList.add('hidden');
+    const index = chartdataList.findIndex( chart => chart.type == type );
+    chartdataList.splice(index,1);
+    updateChart();
+    updateButtons();
+  }
+  else {
+    tooltipDataEdit.innerHTML = 'na wykresie musi być przyjemniej jeden zestaw danych';
+    tooltipDataEdit.classList.add('visible');
+  }
+
 }
 
 function checkTypeSelect(selectNode, operation) {
@@ -224,6 +262,17 @@ function checkTypeSelect(selectNode, operation) {
     else {
       dataAddError = false;
     }
-
+  }
+  else if (operation == 'edit') {
+    if ( nodeValue == inpEditTypeEdited.value ) {
+      dataEditError = false;
+    }
+    else if( !chartdataList.every( chart => chart.type != nodeValue ) ) {
+      tooltipTypeSelectEdit.classList.add('visible');
+      dataEditError = true;
+    }
+    else {
+      dataEditError = false;
+    }
   }
 }

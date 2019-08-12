@@ -26,11 +26,14 @@ const tooltipEndDate = document.querySelector('.tooltip[name="endDate"]');
 const tooltipSwapDates = document.querySelector('.tooltip[name="swapDates"]');
 
 
-const btnChartAdd = document.querySelector('#chartAdd');
-const btnDataAdd = document.querySelector('#dataAdd');
-const btnsDataCancel = document.querySelectorAll('[name="dataCancel"]');
+const btnChartAdd = document.querySelector('button[name="chartAdd"]');
+const btnDataAdd = document.querySelector('button[name="dataAdd"]');
+const btnDataSave = document.querySelector('button[name="dataSave"]');
+const btnDataRemove = document.querySelector('button[name="dataRemove"]');
+const btnsDataCancel = document.querySelectorAll('button[name="dataCancel"]');
 
 const inpEditTypeSelect = document.querySelector('.data-edit [name="typeSelect"]');
+const inpEditTypeEdited = document.querySelector('.data-edit [name="typeEdited"]');
 const inpEditColorSelect = document.querySelector('.data-edit [name="colorSelect"]');
 const inpAddTypeSelect = document.querySelector('.data-add [name="typeSelect"]');
 const inpAddColorSelect = document.querySelector('.data-add [name="colorSelect"]');
@@ -44,6 +47,21 @@ const tooltipColorSelectAdd = document.querySelector('.tooltip[name="dataAddColo
 
 let dataEditError = false;
 let dataAddError = false;
+
+
+function clearTooltips() {
+  tooltipStartDate.classList.remove('visible');
+  tooltipEndDate.classList.remove('visible');
+  tooltipSwapDates.classList.remove('visible');
+
+  tooltipTypeSelectEdit.classList.remove('visible');
+  tooltipColorSelectEdit.classList.remove('visible');
+  tooltipDataEdit.classList.remove('visible');
+
+  tooltipTypeSelectAdd.classList.remove('visible');
+  tooltipColorSelectAdd.classList.remove('visible');
+  tooltipDataAdd.classList.remove('visible');
+}
 
 
 
@@ -125,9 +143,7 @@ btnOwnUnfold.addEventListener('click', () => {
 updateChartRanges();
 
 btnOwnSet.addEventListener('click', () => {
-  tooltipStartDate.classList.remove('visible');
-  tooltipEndDate.classList.remove('visible');
-  tooltipSwapDates.classList.remove('visible');
+  clearTooltips();
 
   let formError = false;
 
@@ -211,9 +227,6 @@ btnSwapDates.addEventListener('click', () => {
 // CHARTS DATASETS
 // - - - - - - -
 
-btnChartAdd.addEventListener('click', () => {
-
-});
 
 const dataEditNode = document.querySelector('.data-edit');
 const dataAddNode = document.querySelector('.data-add');
@@ -224,7 +237,7 @@ btnChartAdd.addEventListener('click', () => {
 });
 
 inpAddTypeSelect.addEventListener('change', () => {
-  tooltipTypeSelectAdd.classList.remove('visible');
+  clearTooltips();
   dataAddError = false;
   if( !chartdataList.every( chart => chart.type != inpAddTypeSelect.value ) ) {
     tooltipTypeSelectAdd.classList.add('visible');
@@ -232,16 +245,19 @@ inpAddTypeSelect.addEventListener('change', () => {
   }
 });
 inpEditTypeSelect.addEventListener('change', () => {
-  tooltipTypeSelectEdit.classList.remove('visible');
+  clearTooltips();
   dataEditError = false;
-  if( !chartdataList.every( chart => chart.type != inpEditTypeSelect.value ) ) {
+  if ( inpEditTypeSelect.value == inpEditTypeEdited.value ) {
+    dataEditError = false;
+  }
+  else if( !chartdataList.every( chart => chart.type != inpEditTypeSelect.value ) ) {
     tooltipTypeSelectEdit.classList.add('visible');
     dataEditError = true;
   }
 });
 
 inpAddColorSelect.addEventListener('change', () => {
-  tooltipColorSelectAdd.classList.remove('visible');
+  clearTooltips();
   dataAddError = false;
   if( !chartdataList.every( chart => chart.color != inpAddColorSelect.value ) ) {
     tooltipColorSelectAdd.classList.add('visible');
@@ -249,7 +265,7 @@ inpAddColorSelect.addEventListener('change', () => {
   }
 });
 inpEditColorSelect.addEventListener('change', () => {
-  tooltipColorSelectEdit.classList.remove('visible');
+  clearTooltips();
   dataEditError = false;
   if( !chartdataList.every( chart => chart.color != inpEditColorSelect.value ) ) {
     tooltipColorSelectEdit.classList.add('visible');
@@ -258,103 +274,54 @@ inpEditColorSelect.addEventListener('change', () => {
 });
 
 btnDataAdd.addEventListener('click', () => {
-  tooltipDataAdd.classList.remove('visible');
+  clearTooltips();
 
   const dataType = inpAddTypeSelect.value;
   const dataColor = inpAddColorSelect.value;
 
   checkTypeSelect(inpAddTypeSelect, 'add');
 
-  if( !dataAddError ) {
+  if(dataType == 'gold') {
+    chartdataList.push( new ChartData(dataType, dataColor, goldDataset) );
+    updateChart();
+    updateButtons();
+  }
+  else if( !dataAddError ) {
     addData(dataType, dataColor);
   }
   else {
     console.log('error!');
   }
-  // else {
-  //   tooltipDataAdd.classList.add('visible');
-  //   tooltipDataAdd.innerHTML = 'wykres tego typu już istnieje';
-  // }
+});
+
+btnDataSave.addEventListener('click', () => {
+  clearTooltips();
+
+  const dataType = inpEditTypeSelect.value;
+  const dataTypeEdited = inpEditTypeEdited.value;
+  const dataColor = inpEditColorSelect.value;
+
+  checkTypeSelect(inpEditTypeSelect, 'edit'); // add 'edit' to function
+
+  const dataIndex = chartdataList.findIndex( chart => chart.type == dataTypeEdited );
+
+  if( !dataEditError ) {
+    editData(dataType, dataColor, dataIndex);
+  }
+  else {
+    console.log('error!');
+  }
+});
+
+btnDataRemove.addEventListener('click', () => {
+  clearTooltips();
+  removeData(inpEditTypeEdited.value);
 });
 
 btnsDataCancel.forEach( button => {
   button.addEventListener('click', () => {
+    clearTooltips();
     dataEditNode.classList.add('hidden');
     dataAddNode.classList.add('hidden');
   });
 });
-
-//
-// btnChartAdd.addEventListener('click', () => {
-// });
-//
-// btnDataSubmit.addEventListener('click', () => {
-//   // dataEditNode.classList.add('hidden');
-//   tooltipDataEdit.classList.remove('visible');
-//
-//   if (chartsList.length < 5) {
-//     const dataData = inpDataSelect.value;
-//     const dataColor = inpColorSelect.value;
-//
-//     if(chartsList.every( chart => chart[1] != dataData )) {
-//       const dataButtonsNode = document.querySelector('.data-buttons');
-//
-//       const buttonNode = document.createElement('button');
-//       buttonNode.classList.add('btn');
-//       buttonNode.classList.add('btn-data');
-//       buttonNode.dataset.currency = dataData;
-//       buttonNode.style.backgroundColor = dataColor;
-//       buttonNode.style.borderColor = dataColor;
-//       buttonNode.innerHTML = `${dataData}<span class="edit"><i class="fas fa-edit"></i></span>`;
-//       buttonNode.addEventListener('click', editData);
-//       dataButtonsNode.appendChild(buttonNode);
-//
-//       let dataType = dataData == 'gold' ? 'gold' : 'currency';
-//
-//       chartsList.push([dataType, dataData, dataColor]);
-//     }
-//     else {
-//       tooltipDataEdit.innerHTML = 'jest już taki wykres';
-//       tooltipDataEdit.classList.add('visible');
-//     }
-//
-//
-//   } else {
-//     tooltipDataEdit.innerHTML = 'zbyt wiele wykresów';
-//     tooltipDataEdit.classList.add('visible');
-//   }
-// })
-//
-// btnDataCancel.addEventListener('click', () => {
-//   dataEditNode.classList.add('hidden');
-//   tooltipDataEdit.classList.remove('visible');
-//
-//   const dataButtons = document.querySelectorAll('.data-buttons .btn-data');
-//   dataButtons.forEach( button => {
-//     button.classList.remove('btn-dimmed');
-//   })
-// })
-//
-// function editData() {
-//   if (!event.target.classList.contains('btn-dimmed')) {
-//     const data = event.target.dataset.currency;
-//     const dataButtons = document.querySelectorAll('.data-buttons .btn-data');
-//     dataButtons.forEach( button => {
-//       button.classList.toggle('btn-dimmed');
-//     })
-//     event.target.classList.remove('btn-dimmed');
-//     dataEditNode.classList.remove('hidden');
-//
-//     const chart = chartsList[0];
-//     console.log(data, chartsList.findIndex( chart => chart[0] == data ) );
-//
-//     document.querySelector('.data-edit').classList.toggle('edit');
-//     document.querySelector('[name="dataSelect"]').value = chart[0];
-//     document.querySelector('[name="colorSelect"]').value = chart[1];
-//
-//   }
-// }
-// const dataButtons = document.querySelectorAll('.data-buttons .btn-data');
-// dataButtons.forEach( button => {
-//   button.addEventListener('click', editData);
-// })

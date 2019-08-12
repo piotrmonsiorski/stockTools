@@ -35,21 +35,21 @@
   <div class="chart-settings hidden">
     <div class="settings">
       <h2 class="subtitle">ustawienia wykresu</h2>
-      <div class="row">
+      <div class="row row-wrap">
         <h3 class="subtitle-sm">wykres złota (zakres)</h3>
         <label class="settings-label">od</label>
         <input class="input-number input-wider" type="number" name="goldMin" min="0">
         <label class="settings-label">do</label>
         <input class="input-number input-wider" type="number" name="goldMax" min="0">
       </div>
-      <div class="row">
+      <div class="row row-wrap">
         <h3 class="subtitle-sm">wykres złota (zakres)</h3>
         <label class="settings-label">od</label>
         <input class="input-number input-wider" type="number" name="currencyMin" min="0">
         <label class="settings-label">do</label>
         <input class="input-number input-wider" type="number" name="currencyMax" min="0">
       </div>
-      <div class="row">
+      <div class="row row-buttons">
         <button class="btn" name="settingsSave">zapisz</button>
         <button class="btn btn-outline" name="settingsCancel">anuluj</button>
       </div>
@@ -90,7 +90,7 @@
     <div class="data-wrap">
       <h3 class="subtitle">zarządzaj wykresami</h3>
       <div class="container data-buttons">
-        <button class="btn btn-outline btn-dark btn-add" id="chartAdd"><i class="fas fa-plus"></i></button>
+        <button class="btn btn-outline btn-dark btn-add" name="chartAdd"><i class="fas fa-plus"></i></button>
       </div>
     </div>
 
@@ -116,7 +116,7 @@
           </select>
           <label class="tooltip tooltip-warning tooltip-right" name="dataAddColor"><i class="fas fa-exclamation-triangle"></i>taki kolor już istnieje</label>
         </div>
-        <button class="btn" id="dataAdd">dodaj</button>
+        <button class="btn" name="dataAdd">dodaj</button>
         <button class="btn btn-outline btn-dark" name="dataCancel">anuluj</button>
         <label class="tooltip" name="dataAdd"></label>
       </div>
@@ -126,6 +126,7 @@
       <div class="wrap">
         <div class="row type-select">
           <label class="data-label">wykres:</label>
+          <input type="hidden" name="typeEdited" value="">
           <select name="typeSelect">
             <option value="gold">złoto</option>
           </select>
@@ -144,10 +145,10 @@
           </select>
           <label class="tooltip tooltip-warning tooltip-right" name="dataEditColor"><i class="fas fa-exclamation-triangle"></i>taki kolor już istnieje</label>
         </div>
-        <button class="btn" id="dataEdit">zapisz</button>
-        <button class="btn" id="dataRemove">usuń</button>
+        <button class="btn" name="dataSave">zapisz</button>
+        <button class="btn" name="dataRemove">usuń</button>
         <button class="btn btn-outline btn-dark" name="dataCancel">anuluj</button>
-        <!-- <label class="tooltip" name="dataEdit"></label> -->
+        <label class="tooltip tooltip-error" name="dataEdit"></label>
       </div>
     </div>
 
@@ -190,11 +191,11 @@
   <!-- <script src="list.js"></script> -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
 
-  <!-- <script src="js/functions.js"></script>
+  <script src="js/functions.js"></script>
   <script src="js/classes.js"></script>
   <script src="js/charts.js"></script>
   <script src="js/script.js"></script>
-  <script src="js/buttons.js"></script> -->
-  <script src="js/script.min.js"></script>
+  <script src="js/buttons.js"></script>
+  <!-- <script src="js/script.min.js"></script> -->
 </body>
 </html>

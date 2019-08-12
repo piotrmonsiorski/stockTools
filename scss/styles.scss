@@ -104,13 +104,13 @@ select {
   &.tooltip-warning {
     background-color: $colorWarning;
     &::before {
-      border-color: transparent  $colorWarning transparent transparent;
+      border-color: transparent transparent $colorWarning transparent;
     }
   }
   &.tooltip-error {
     background-color: $colorError;
     &::before {
-      border-color: transparent $colorError transparent transparent;
+      border-color: transparent transparent $colorError transparent;
     }
   }
   &.tooltip-right {
@@ -121,6 +121,16 @@ select {
       left: -15px;
       top: 50%;
       transform: translateY(-50%);
+    }
+    &.tooltip-warning {
+      &::before {
+        border-color: transparent $colorWarning transparent transparent;
+      }
+    }
+    &.tooltip-error {
+      &::before {
+        border-color: transparent $colorError transparent transparent;
+      }
     }
     i {
       left: -10px;
@@ -166,8 +176,10 @@ input::-webkit-inner-spin-button {
 .row {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
   justify-content: center;
+  &.row-wrap {
+    flex-wrap: wrap;
+  }
 }
 
 .subtitle {
@@ -252,6 +264,9 @@ input::-webkit-inner-spin-button {
     .row {
       margin: 1rem 0;
     }
+    .row-buttons {
+      justify-content: center;
+    }
     .settings-label {
       margin-left: 1.5rem;
       padding: 8px;
@@ -265,7 +280,7 @@ input::-webkit-inner-spin-button {
       }
     }
     button {
-      margin: 1.5rem auto 0;
+      margin: 1.5rem 1rem 0;
     }
   }
 }
@@ -372,7 +387,7 @@ input::-webkit-inner-spin-button {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 230px;
+    height: 350px;
     transition: height 0.25s ease-in-out;
     overflow: hidden;
     &.hidden {

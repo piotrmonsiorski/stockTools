@@ -94,13 +94,13 @@ select {
   background-color: #e08e19;
 }
 .tooltip.tooltip-warning::before {
-  border-color: transparent #e08e19 transparent transparent;
+  border-color: transparent transparent #e08e19 transparent;
 }
 .tooltip.tooltip-error {
   background-color: #bc1d28;
 }
 .tooltip.tooltip-error::before {
-  border-color: transparent #bc1d28 transparent transparent;
+  border-color: transparent transparent #bc1d28 transparent;
 }
 .tooltip.tooltip-right {
   left: 100%;
@@ -111,6 +111,12 @@ select {
   left: -15px;
   top: 50%;
   transform: translateY(-50%);
+}
+.tooltip.tooltip-right.tooltip-warning::before {
+  border-color: transparent #e08e19 transparent transparent;
+}
+.tooltip.tooltip-right.tooltip-error::before {
+  border-color: transparent #bc1d28 transparent transparent;
 }
 .tooltip.tooltip-right i {
   left: -10px;
@@ -154,8 +160,10 @@ input::-webkit-inner-spin-button {
 .row {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
   justify-content: center;
+}
+.row.row-wrap {
+  flex-wrap: wrap;
 }
 
 .subtitle {
@@ -241,6 +249,9 @@ input::-webkit-inner-spin-button {
 .chart-settings .settings .row {
   margin: 1rem 0;
 }
+.chart-settings .settings .row-buttons {
+  justify-content: center;
+}
 .chart-settings .settings .settings-label {
   margin-left: 1.5rem;
   padding: 8px;
@@ -254,7 +265,7 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 .chart-settings .settings button {
-  margin: 1.5rem auto 0;
+  margin: 1.5rem 1rem 0;
 }
 
 .control * {
@@ -354,7 +365,7 @@ input::-webkit-inner-spin-button {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 230px;
+  height: 350px;
   transition: height 0.25s ease-in-out;
   overflow: hidden;
 }

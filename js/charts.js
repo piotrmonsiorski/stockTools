@@ -1,7 +1,7 @@
 const chartSettings = {
   minGold: 100,
   maxGold: 200,
-  minCurrency: 2,
+  minCurrency: 3,
   maxCurrency: 5
 }
 
@@ -44,7 +44,8 @@ function drawChart(_canvas = 'chartMain', _startDate = apiStartDate, _endDate = 
       backgroundColor: 'transparent',
       borderColor: chart.color,
       borderWidth: 2,
-      lineTension: 0
+      lineTension: 0,
+      pointRadius: 0
     });
   }
 
@@ -54,12 +55,6 @@ function drawChart(_canvas = 'chartMain', _startDate = apiStartDate, _endDate = 
   }, []) // reduce to 1 dim array
     .slice(startIndex, endIndex);
 
-  const minTicksGold = chartSettings.minGold;
-  const maxTicksGold = chartSettings.maxGold;
-  const minTicksCurrency = chartSettings.minCurrency;
-  const maxTicksCurrency = chartSettings.maxCurrency;
-
-
   // const minTick = Math.round( ([...chartData].sort( (a,b) => a - b )[0] - 10) / 10 ) * 10; // 168 - 160
   // const maxTick = Math.round( ([...chartData].sort( (a,b) => b - a )[0] + 10) / 10 ) * 10; // 179 - 190
 
@@ -67,8 +62,6 @@ function drawChart(_canvas = 'chartMain', _startDate = apiStartDate, _endDate = 
   // const maxTick = Math.round( [...chartData].sort( (a,b) => b - a )[0] * 1.025 );
 
   let aspectRatio = 3;
-
-
 
   const mainChart = new Chart(canvasCtx, {
     type: 'line',
@@ -86,17 +79,17 @@ function drawChart(_canvas = 'chartMain', _startDate = apiStartDate, _endDate = 
           id: 'gold',
           position: 'left',
           ticks: {
-            min: minTicksGold,
-            max: maxTicksGold,
-            beginAtZero: false,
+            min: chartSettings.minGold,
+            max: chartSettings.maxGold,
+            stepSize: (chartSettings.maxGold - chartSettings.minGold) / 6
           }
         },{
           id: 'currency',
           position: 'right',
           ticks: {
-            min: minTicksCurrency,
-            max: maxTicksCurrency,
-            beginAtZero: false,
+            min: chartSettings.minCurrency,
+            max: chartSettings.maxCurrency,
+            stepSize: (chartSettings.maxCurrency - chartSettings.minCurrency) / 6
           }
         }],
         xAxes: [{
@@ -109,5 +102,4 @@ function drawChart(_canvas = 'chartMain', _startDate = apiStartDate, _endDate = 
       }
     }
   });
-  // console.log(mainChart);
 }
